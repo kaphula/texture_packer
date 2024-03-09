@@ -63,33 +63,4 @@ impl <K> Frame<K> {
 
         (offset_x, offset_y)
     }
-
-
-    fn frame_center_before_trimming(&self) -> (u32, u32) {
-
-        // if not trimmed, just return the frame center:
-        if !self.trimmed {
-            let cx = self.frame.x + self.frame.w / 2;
-            let cy = self.frame.y + self.frame.h / 2;
-            return (cx, cy)
-        }
-
-        // size of x and y trimming in pixels:
-        let trim_x = self.source.x;
-        let trim_y = self.source.y;
-
-        // move back the frame position by trimming amount:
-        let og_start_x = self.frame.x - trim_x;
-        let og_start_y = self.frame.y - trim_y;
-
-        // original width and height without trimming:
-        let og_start_w = self.source.w;
-        let og_start_h = self.source.h;
-
-        // calculate original center:
-        let center_x = og_start_x + og_start_w / 2;
-        let center_y = og_start_y + og_start_h / 2;
-        (center_x, center_y)
-    }
-
 }
