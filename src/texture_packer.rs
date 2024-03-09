@@ -41,6 +41,76 @@ impl<'a, Pix: Pixel, T: 'a + Clone + Texture<Pixel = Pix>, K: Clone + Eq + Hash>
 impl<'a, Pix: Pixel, T: Clone + Texture<Pixel = Pix>, K: Clone + Eq + Hash>
     TexturePacker<'a, T, K>
 {
+    fn frame_center_before_trimming(&self, frame: Frame<K>) -> (u32, u32) {
+        // if not trimmed, just return the frame center:
+        if !frame.trimmed {
+            let cx = frame.frame.x + frame.frame.w / 2;
+            let cy = frame.frame.y + frame.frame.h / 2;
+            return (cx, cy)
+        }
+
+        // size of x and y trimming in pixels:
+        let trim_x = frame.source.x;
+        let trim_y = frame.source.y;
+
+        // move back the frame position by trimming amount:
+        let og_start_x = frame.frame.x - trim_x;
+        let og_start_y = frame.frame.y - trim_y;
+
+        // original width and height without trimming:
+        let og_start_w = frame.source.w;
+        let og_start_h = frame.source.h;
+
+        // calculate original center:
+        let center_x = og_start_x + og_start_w / 2;
+        let center_y = og_start_y + og_start_h / 2;
+
+        self.width();
+        self.height();
+        // if we are outside the packer's dimensions, clamp to its border:
+        let clamp_x = center_x.clamp(0, self.width());
+        let clamp_y = center_y.clamp(0, self.height());
+
+        (clamp_x, clamp_y)
+    }
+
+
+    fn frame_center_before_trimming(&self, frame: Frame<K>) -> (u32, u32) {
+
+
+        // if not trimmed, just return the frame center:
+        if !frame.trimmed {
+            let cx = frame.frame.x + frame.frame.w / 2;
+            let cy = frame.frame.y + frame.frame.h / 2;
+            return (cx, cy)
+        }
+
+        // size of x and y trimming in pixels:
+        let trim_x = frame.source.x;
+        let trim_y = frame.source.y;
+
+        // move back the frame position by trimming amount:
+        let og_start_x = frame.frame.x - trim_x;
+        let og_start_y = frame.frame.y - trim_y;
+
+        // original width and height without trimming:
+        let og_start_w = frame.source.w;
+        let og_start_h = frame.source.h;
+
+        // calculate original center:
+        let center_x = og_start_x + og_start_w / 2;
+        let center_y = og_start_y + og_start_h / 2;
+
+        self.width();
+        self.height();
+        // if we are outside the packer's dimensions, clamp to its border:
+        let clamp_x = center_x.clamp(0, self.width());
+        let clamp_y = center_y.clamp(0, self.height());
+
+        (clamp_x, clamp_y)
+    }
+
+
     /// Check if the texture can be packed into this packer.
     pub fn can_pack(&self, texture: &'a T) -> bool {
         let rect = texture.into();
@@ -137,6 +207,14 @@ impl<'a, Pix: Pixel, T: Clone + Texture<Pixel = Pix>, K: Clone + Eq + Hash>
         None
     }
 }
+
+
+
+
+
+
+
+
 
 impl<'a, Pix, T: Clone, K: Clone + Eq + Hash> Texture for TexturePacker<'a, T, K>
 where
