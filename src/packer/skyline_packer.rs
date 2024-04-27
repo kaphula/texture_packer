@@ -187,35 +187,4 @@ impl<K> Packer<K> for SkylinePacker {
         false
     }
 
-    fn frame_center_before_trimming(&self, frame: Frame<K>) -> (u32, u32) {
-
-        // if not trimmed, just return the frame center:
-        if !frame.trimmed {
-            let cx = frame.frame.x + frame.frame.w / 2;
-            let cy = frame.frame.y + frame.frame.h / 2;
-            return (cx, cy)
-        }
-
-        // size of x and y trimming in pixels:
-        let trim_x = frame.source.x;
-        let trim_y = frame.source.y;
-
-        // move back the frame position by trimming amount:
-        let og_start_x = frame.frame.x - trim_x;
-        let og_start_y = frame.frame.y - trim_y;
-
-        // original width and height without trimming:
-        let og_start_w = frame.source.w;
-        let og_start_h = frame.source.h;
-
-        // calculate original center:
-        let center_x = og_start_x + og_start_w / 2;
-        let center_y = og_start_y + og_start_h / 2;
-
-        // if we are outside the packer's dimensions, clamp to its border:
-        let clamp_x = center_x.clamp(self.border.x, self.border.w);
-        let clamp_y = center_y.clamp(self.border.y, self.border.h);
-
-        (clamp_x, clamp_y)
-    }
 }

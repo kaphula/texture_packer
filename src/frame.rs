@@ -33,33 +33,36 @@ pub struct Frame<K> {
 
 
 impl <K> Frame<K> {
-    pub fn offset_to_frame_center_before_trimming(&self) -> (u32, u32) {
+
+    /// Returns an offset in pixels to non-trimmed frame center coordinate
+    /// from trimmed frame center coordinate (trimmed frame's center is considered to be the origin).
+    ///
+    /// This can be useful if you want to center your trimmed frame in relation to the original non-trimmed frame.
+    /// For example, if you have many animation images with the same dimensions, but their inner pixels can be trimmed,
+    /// drawing the trimmed frames in a fixed position the same way as seen in the non-trimmed frames requires
+    /// calculating this offset and applying it to the drawing position.
+    ///
+    /// When drawing your trimmed frames to a fixed position so that the fixed position will
+    /// be at the center of your trimmed frame, adding this offset to the fixed position
+    /// transforms the trimmed frame to its non-trimmed position.
+    ///
+    /// If no trimming was done for the frame, `(0,0)` is returned.
+    pub fn trimmed_center_to_non_trimmed_center_offset(&self) -> (i32, i32) {
         if !self.trimmed {
             return (0, 0)
         }
 
-        // size of x and y trimming in pixels:
         let trim_x = self.source.x;
         let trim_y = self.source.y;
 
-        // move back the frame position by trimming amount:
-        let og_start_x = self.frame.x - trim_x;
-        let og_start_y = self.frame.y - trim_y;
+        let txw = trim_x + self.frame.w / 2;
+        let txh = trim_y + self.frame.h / 2;
 
-        // original width and height without trimming:
-        let og_start_w = self.source.w;
-        let og_start_h = self.source.h;
+        let ocx = self.source.w / 2;
+        let ocy = self.source.h / 2;
 
-        // calculate original center:
-        let center_x = og_start_x + og_start_w / 2;
-        let center_y = og_start_y + og_start_h / 2;
-
-
-        let trimmed_center_x = self.frame.x + self.frame.w / 2;
-        let trimmed_center_y = self.frame.y + self.frame.h / 2;
-
-        let offset_x = center_x - trimmed_center_x;
-        let offset_y = center_y - trimmed_center_y;
+        let offset_x: i32 = (ocx as i32 - txw as i32);
+        let offset_y: i32 = (ocy as i32 - txh as i32);
 
         (offset_x, offset_y)
     }

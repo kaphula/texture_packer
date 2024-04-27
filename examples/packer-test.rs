@@ -23,6 +23,7 @@ fn main() {
         texture_outlines: true,
         border_padding: 2,
         force_max_dimensions: false,
+        trim: true,
         ..Default::default()
     };
 
@@ -30,7 +31,7 @@ fn main() {
     {
         let mut packer = TexturePacker::new_skyline(config);
 
-        for i in 1..11 {
+        for i in 1..12 {
             let name = format!("{}.png", i);
             let path = format!("examples/assets/{}", name);
             let path = Path::new(&path);
@@ -46,6 +47,8 @@ fn main() {
         println!("Dimensions : {}x{}", packer.width(), packer.height());
         for (name, frame) in packer.get_frames() {
             println!("  {:7} : {:?}", name, frame.frame);
+            let (ox, oy) = frame.offset_to_frame_center_before_trimming();
+            println!("offset to center: {} : {}", ox, oy);
         }
 
         //
